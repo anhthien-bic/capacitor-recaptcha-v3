@@ -6,16 +6,23 @@ ext {
 }
 
 buildscript {
+    def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["RecaptchaEnterpriseReactNative_kotlinVersion"]
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.7.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+def getExtOrDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["RecaptchaEnterpriseReactNative_" + name]
+}
 
 android {
     namespace "com.thienna.capacitor.recaptchav3"
@@ -36,22 +43,38 @@ android {
     lintOptions {
         abortOnError false
     }
+    kotlinOptions {
+        jvmTarget = '21'
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
     }
 }
 
+// kotlin {
+//     jvmToolchain(21)
+// }
+
 repositories {
     google()
     mavenCentral()
 }
 
+def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':capacitor-android')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    
+    // reCAPTCHA Enterprise SDK
+    implementation 'com.google.android.recaptcha:recaptcha:18.7.1'
+    
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
