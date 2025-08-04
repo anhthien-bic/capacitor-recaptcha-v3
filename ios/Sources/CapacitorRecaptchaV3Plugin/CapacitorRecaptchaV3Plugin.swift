@@ -1,62 +1,96 @@
 import Foundation
 import Capacitor
+import RecaptchaEnterprise
 
-/**
- * Please read the Capacitor iOS Plugin Development Guide
- * here: https://capacitorjs.com/docs/plugins/ios
- */
-public class CapacitorRecaptchaV3Plugin: CAPPlugin, CAPBridgedPlugin {
-    public let identifier = "CapacitorRecaptchaV3Plugin"
-    public let jsName = "CapacitorRecaptchaV3"
-    public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "fetchClient", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "initClient", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "execute", returnType: CAPPluginReturnPromise)
-    ]
-    private let implementation = CapacitorRecaptchaV3()
+@objc(CapacitorRecaptchaV3Plugin)
+public class CapacitorRecaptchaV3Plugin: CAPPlugin {
+    private var recaptchaClient: RecaptchaClient?
 
-    func fetchClient(_ call: CAPPluginCall) {
-        let siteKey = call.getString("siteKey") ?? ""
-        implementation.fetchClient(siteKey: siteKey) { result in
-            switch result {
-            case .success(let client):
-                call.resolve([
-                    "client": client
-                ])
-            case .failure(let error):
-                call.reject(error.localizedDescription)
+    private func mapAction(_ actionStr: String) -> RecaptchaAction {
+        switch actionStr {
+        case "login":
+            return .login
+        case "signup":
+            return .signup
+        default:
+            return RecaptchaAction(customAction: actionStr)
+        }
+    }
+
+    @objc func fetchClient(_ call: CAPPluginCall) {
+        guard let siteKey = call.getString("siteKey") else {
+            call.reject("siteKey is required")
+            return
+        }
+
+        Recaptcha.fetchClient(withSiteKey: siteKey) { client, error in
+            if let client = client {
+                self.recaptchaClient = client
+                call.resolve()
+            } else if let error = error as? RecaptchaError {
+                call.reject(error.errorMessage ?? "Unknown error", String(error.errorCode.rawValue), error)
+            } else {
+                call.reject("Unknown error")
             }
         }
     }
 
-    func initClient(_ call: CAPPluginCall) {
-        let siteKey = call.getString("siteKey") ?? ""
-        let timeout = call.getInt("timeout")
-        implementation.initClient(siteKey: siteKey, timeout: timeout) { result in
-            switch result {
-            case .success(let token):
-                call.resolve([
-                    "token": token
-                ])
-            case .failure(let error):
-                call.reject(error.localizedDescription)
+    @objc func initClient(_ call: CAPPluginCall) {
+        guard let siteKey = call.getString("siteKey") else {
+            call.reject("siteKey is required")
+            return
+        }
+
+        let timeout = call.getDouble("timeout")
+
+        let completion: (RecaptchaClient?, Error?) -> Void = { client, error in
+            if let client = client {
+                self.recaptchaClient = client
+                call.resolve()
+            } else if let error = error as? RecaptchaError {
+                call.reject(error.errorMessage ?? "Unknown error", String(error.errorCode.rawValue), error)
+            } else {
+                call.reject("Unknown error")
             }
+        }
+
+        if let timeout = timeout {
+            Recaptcha.getClient(withSiteKey: siteKey, withTimeout: timeout, completion: completion)
+        } else {
+            Recaptcha.getClient(withSiteKey: siteKey, completion: completion)
         }
     }
 
-    func execute(_ call: CAPPluginCall) {
-        let action = call.getObject("action") ?? [:]
-        let actionName = action["action"] as? String ?? ""
-        let timeout = call.getInt("timeout")
-        implementation.execute(action: actionName, timeout: timeout) { result in
-            switch result {
-            case .success(let token):
-                call.resolve([
-                    "token": token
-                ])
-            case .failure(let error):
-                call.reject(error.localizedDescription)
+    @objc func execute(_ call: CAPPluginCall) {
+        guard let action = call.getString("action") else {
+            call.reject("action is required")
+            return
+        }
+
+        guard let client = recaptchaClient else {
+            call.reject("Client not initialized")
+            return
+        }
+
+        let recaptchaAction = mapAction(action)
+        let timeout = call.getDouble("timeout")
+
+        let completion: (String?, Error?) -> Void = { token, error in
+            if let token = token {
+                var result = JSObject()
+                result["token"] = token
+                call.resolve(result)
+            } else if let error = error as? RecaptchaError {
+                call.reject(error.errorMessage ?? "Unknown error", String(error.errorCode.rawValue), error)
+            } else {
+                call.reject("Unknown error")
             }
+        }
+
+        if let timeout = timeout {
+            client.execute(withAction: recaptchaAction, withTimeout: timeout, completion: completion)
+        } else {
+            client.execute(withAction: recaptchaAction, completion: completion)
         }
     }
 }
