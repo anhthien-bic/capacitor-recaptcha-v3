@@ -11,19 +11,19 @@ export interface CapacitorRecaptchaV3Plugin {
    * Fetches a reCAPTCHA client immediately
    * @param siteKey Your application's reCAPTCHA site key
    */
-  fetchClient(siteKey: string): Promise<RecaptchaClient>;
+  fetchClient({siteKey}: {siteKey: string}): Promise<RecaptchaClient>;
   
   /**
    * Initialize a reCAPTCHA client
    * @param siteKey Your application's reCAPTCHA site key
    * @param timeout An optional timeout value in milliseconds
    */
-  initClient(siteKey: string, timeout?: number): Promise<string>;
+  initClient({siteKey, timeout}: {siteKey: string, timeout?: number}): Promise<void>;
   
   /**
    * Execute reCAPTCHA and retrieve a token
-   * @param action An action to describe what the user is doing such as "login"
+   * @param action An action string to describe what the user is doing such as "login"
    * @param timeout An optional timeout value in milliseconds
    */
-  execute(action: RecaptchaAction, timeout?: number): Promise<string>;
+  execute({action, timeout}: {action: string, timeout?: number}): Promise<string>;
 }

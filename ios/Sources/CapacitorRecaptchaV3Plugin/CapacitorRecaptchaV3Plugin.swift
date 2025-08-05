@@ -3,7 +3,15 @@ import Capacitor
 import RecaptchaEnterprise
 
 @objc(CapacitorRecaptchaV3Plugin)
-public class CapacitorRecaptchaV3Plugin: CAPPlugin {
+public class CapacitorRecaptchaV3Plugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "CapacitorRecaptchaV3Plugin"
+    public let jsName = "CapacitorRecaptchaV3"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "fetchClient", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "initClient", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "execute", returnType: CAPPluginReturnPromise)
+    ]
+    
     private var recaptchaClient: RecaptchaClient?
 
     private func mapAction(_ actionStr: String) -> RecaptchaAction {

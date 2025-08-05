@@ -5,15 +5,15 @@ export class RecaptchaAction {
     this.action = action;
   }
 
-  static LOGIN() {
+  static LOGIN(): RecaptchaAction {
     return new RecaptchaAction('login');
   }
 
-  static SIGNUP() {
+  static SIGNUP(): RecaptchaAction {
     return new RecaptchaAction('signup');
   }
 
-  static custom(action: string) {
+  static custom(action: string): RecaptchaAction {
     return new RecaptchaAction(action);
   }
 } 

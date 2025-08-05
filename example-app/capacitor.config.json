@@ -6,5 +6,6 @@
     "SplashScreen": {
       "launchAutoHide": false
     }
-  }
+  },
+  "loggingBehavior": "production"
 }

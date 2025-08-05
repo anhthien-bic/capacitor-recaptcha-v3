@@ -117,14 +117,14 @@ const token = await CapacitorRecaptchaV3.execute(RecaptchaAction.LOGIN(), 5000);
 ### fetchClient(...)
 
 ```typescript
-fetchClient(siteKey: string) => Promise<RecaptchaClient>
+fetchClient({ siteKey }: { siteKey: string; }) => Promise<RecaptchaClient>
 ```
 
 Fetches a reCAPTCHA client immediately
 
-| Param         | Type                | Description                           |
-| ------------- | ------------------- | ------------------------------------- |
-| **`siteKey`** | <code>string</code> | Your application's reCAPTCHA site key |
+| Param     | Type                              | Description                           |
+| --------- | --------------------------------- | ------------------------------------- |
+| **`__0`** | <code>{ siteKey: string; }</code> | Your application's reCAPTCHA site key |
 
 **Returns:** <code>Promise&lt;<a href="#recaptchaclient">RecaptchaClient</a>&gt;</code>
 
@@ -134,17 +134,14 @@ Fetches a reCAPTCHA client immediately
 ### initClient(...)
 
 ```typescript
-initClient(siteKey: string, timeout?: number | undefined) => Promise<string>
+initClient({ siteKey, timeout }: { siteKey: string; timeout?: number; }) => Promise<void>
 ```
 
 Initialize a reCAPTCHA client
 
-| Param         | Type                | Description                               |
-| ------------- | ------------------- | ----------------------------------------- |
-| **`siteKey`** | <code>string</code> | Your application's reCAPTCHA site key     |
-| **`timeout`** | <code>number</code> | An optional timeout value in milliseconds |
-
-**Returns:** <code>Promise&lt;string&gt;</code>
+| Param     | Type                                                | Description                           |
+| --------- | --------------------------------------------------- | ------------------------------------- |
+| **`__0`** | <code>{ siteKey: string; timeout?: number; }</code> | Your application's reCAPTCHA site key |
 
 --------------------
 
@@ -152,15 +149,14 @@ Initialize a reCAPTCHA client
 ### execute(...)
 
 ```typescript
-execute(action: RecaptchaAction, timeout?: number | undefined) => Promise<string>
+execute({ action, timeout }: { action: string; timeout?: number; }) => Promise<string>
 ```
 
 Execute reCAPTCHA and retrieve a token
 
-| Param         | Type                                                        | Description                                                  |
-| ------------- | ----------------------------------------------------------- | ------------------------------------------------------------ |
-| **`action`**  | <code><a href="#recaptchaaction">RecaptchaAction</a></code> | An action to describe what the user is doing such as "login" |
-| **`timeout`** | <code>number</code>                                         | An optional timeout value in milliseconds                    |
+| Param     | Type                                               | Description                                                         |
+| --------- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| **`__0`** | <code>{ action: string; timeout?: number; }</code> | An action string to describe what the user is doing such as "login" |
 
 **Returns:** <code>Promise&lt;string&gt;</code>
 
