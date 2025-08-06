@@ -5,13 +5,13 @@ export interface RecaptchaClient {
    * @param action An action to describe what the user is doing such as "login"
    * @param timeout An optional timeout value in milliseconds
    */
-  execute({action, timeout}: {action: string, timeout?: number}): Promise<string>;
+  execute({action, timeout}: {action: string, timeout?: number}): Promise<{token: string}>;
 }
 
 export class RecaptchaClientImpl implements RecaptchaClient {
   constructor(private plugin: any) {}
 
-  execute({action, timeout}: {action: string, timeout?: number}): Promise<string> {
+  execute({action, timeout}: {action: string, timeout?: number}): Promise<{token: string}> {
     return this.plugin.execute({action, timeout});
   }
 }

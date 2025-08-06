@@ -15,7 +15,7 @@ export class CapacitorRecaptchaV3Web extends WebPlugin implements CapacitorRecap
     throw new Error('Web platform is not supported for reCAPTCHA Enterprise');
   }
 
-  async execute({action, timeout}: {action: string, timeout?: number}): Promise<string> {
+  async execute({action, timeout}: {action: string, timeout?: number}): Promise<{token: string}> {
     console.log('execute called with action:', action, 'timeout:', timeout);
     // Web implementation would need to be implemented differently
     throw new Error('Web platform is not supported for reCAPTCHA Enterprise');

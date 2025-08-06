@@ -25,5 +25,5 @@ export interface CapacitorRecaptchaV3Plugin {
    * @param action An action string to describe what the user is doing such as "login"
    * @param timeout An optional timeout value in milliseconds
    */
-  execute({action, timeout}: {action: string, timeout?: number}): Promise<string>;
+  execute({action, timeout}: {action: string, timeout?: number}): Promise<{ token: string }>;
 }
