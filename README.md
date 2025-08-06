@@ -149,7 +149,7 @@ Initialize a reCAPTCHA client
 ### execute(...)
 
 ```typescript
-execute({ action, timeout }: { action: string; timeout?: number; }) => Promise<string>
+execute({ action, timeout }: { action: string; timeout?: number; }) => Promise<{ token: string; }>
 ```
 
 Execute reCAPTCHA and retrieve a token
@@ -158,7 +158,7 @@ Execute reCAPTCHA and retrieve a token
 | --------- | -------------------------------------------------- | ------------------------------------------------------------------- |
 | **`__0`** | <code>{ action: string; timeout?: number; }</code> | An action string to describe what the user is doing such as "login" |
 
-**Returns:** <code>Promise&lt;string&gt;</code>
+**Returns:** <code>Promise&lt;{ token: string; }&gt;</code>
 
 --------------------
 
